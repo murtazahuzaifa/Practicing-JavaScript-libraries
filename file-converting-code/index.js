@@ -1,50 +1,4 @@
 require('dotenv').config();
-// const pdf =  require('pdfjs');
-// // const pdf_dist = require('pdfjs-dist');
-// const pdfjsLib  = require('pdfjs-dist/build/pdf');
-
-// pdfjsLib.GlobalWorkerOptions.workerSrc = require('pdfjs-dist/build/pdf.worker');
-// // pdfjsLib.GlobalWorkerOptions.workerSrc = '//mozilla.github.io/pdf.js/build/pdf.worker.js';
-// let loadingTask = pdfjsLib.getDocument('Cn.pdf');
-// loadingTask.promise.then(function(pdf) {
-//     console.log('PDF loaded');
-
-//     // Fetch the first page
-//     var pageNumber = 1;
-//     pdf.getPage(pageNumber).then(function(page) {
-//       console.log('Page loaded');
-
-//   var scale = 1.5;
-//   var viewport = page.getViewport({scale: scale});
-
-//   // Prepare canvas using PDF page dimensions
-//   var canvas = document.getElementById('the-canvas');
-//   var context = canvas.getContext('2d');
-//   canvas.height = viewport.height;
-//   canvas.width = viewport.width;
-
-//   // Render PDF page into canvas context
-//   var renderContext = {
-//     canvasContext: context,
-//     viewport: viewport
-//   };
-//   var renderTask = page.render(renderContext);
-//   renderTask.promise.then(function () {
-//     console.log('Page rendered');
-//   });
-// });
-//   }, function (reason) {
-//     // PDF loading error
-//     console.error(reason);
-//   });
-// console.log('initialize')
-// const doc = new pdf.ExternalDocument()
-
-// pdf_dist.getDocument('file.pdf').then((pdf)=>{
-//     pdf.getPage(1).then((page)=>{
-//         console.log(page)
-//     })
-// })
 
 /*const fs = require('fs');
 const pdfParser = require('pdf-parse');
@@ -83,8 +37,8 @@ main();*/
 var GroupDocs = require('groupdocs-conversion-cloud');
 const fs = require('fs');
 // get your appSid and appKey at https://dashboard.groupdocs.cloud (free registration is required).
-var appSid = process.env.appSid
-var appKey = process.env.appKey
+// var appSid = process.env.appSid
+// var appKey = process.env.appKey
 /*
 // construct Api
 var api = GroupDocs.InfoApi.fromKeys(appSid, appKey);
@@ -112,7 +66,7 @@ const main = async () => {
 
         const requestDownload = new GroupDocs.DownloadFileRequest(fileName);
         const responseDownload = await fileApi.downloadFile(requestDownload);
-        const 
+
         // responseDownload = responseDownload
         console.log('Download Response ==>> ', responseDownload)
         fs.writeFileSync('C:/Temp/02_pages_copy.docx', responseDownload)
@@ -124,45 +78,102 @@ const main = async () => {
 }
 */
 
-// file upload and convert example
+const uploadFile = async (remotePath, localPath, fileApi) => {
+    /* remotePath: is use to put the file in the cloud
+   localPath: is use to get the file form local computer
+   fileApi: GroupDocs.FileApi.fromKeys(appSid, appKey) */
+    const localFile = fs.readFileSync(localPath);
+    const requestUpload = new GroupDocs.UploadFileRequest(remotePath, localFile);
+    return fileApi.uploadFile(requestUpload)
+}
+const convertFile = async (remoteFileName, strFormat, outputRemotePath, convertApi) => {
+    /* remoteFileName: the file path in cloud server, which will later use to pick the file from cloud and convert it in given format
+    strFormat: its a dot extension of the file, that in which format the file should be convert
+    outputRemotePath: the output path will use to put the output of converted file in the cloud
+    convertApi:  GroupDocs.ConvertApi.fromKeys(appSid, appKey) */
+    const setting = new GroupDocs.ConvertSettings();
+    setting.filePath = remoteFileName;
+    setting.format = strFormat;
+    setting.outputPath = outputRemotePath;
+
+    const loadOptions = new GroupDocs.PdfLoadOptions();
+    loadOptions.hidePdfAnnotations = true;
+    loadOptions.removeEmbeddedFiles = false;
+    loadOptions.flattenAllFields = true;
+
+    setting.loadOptions = loadOptions;
+
+    // const convertOptions = new GroupDocs.DocxConvertOptions()
+    // convertOptions.fromPage = 1
+    // convertOptions.pagesCount = 1
+
+    // setting.convertOptions = convertOptions
+
+    const convertRequest = new GroupDocs.ConvertDocumentRequest(setting)
+    return convertApi.convertDocument(convertRequest)
+}
+const downloadFile = async (fileName, fileApi) => {
+    /* fileName: require the file name which file to download from the cloud server
+       fileApi: GroupDocs.FileApi.fromKeys(appSid, appKey) */
+    const requestDownload = new GroupDocs.DownloadFileRequest(fileName);
+    return fileApi.downloadFile(requestDownload)
+}
+
+// https://products.groupdocs.cloud/conversion/nodejs   conversion from to link
+
+// file upload, convert and download example
 const main = async () => {
+    const appSid = process.env.appSid
+    const appKey = process.env.appKey
     const convertApi = GroupDocs.ConvertApi.fromKeys(appSid, appKey);
     const fileApi = GroupDocs.FileApi.fromKeys(appSid, appKey);
+    const fileName = 'Cn';
+    const strFormat = 'ppt';
+    const uploadFileName = `${fileName}.pdf`;
+    const remoteFileName = `${fileName}.pdf`;
+    const outputRemotePath = `${fileName}.${strFormat}`;
+    const downloadPath = `${fileName}.${strFormat}`
 
     try {
-        const uploadFileName = 'Cn.pdf';
-        const remoteFileName = 'cn.pdf';
-        const outputRemotePath = 'cn.docx';
-        const strFormat = 'docx'
+        // await uploadFile(remoteFileName, uploadFileName, fileApi)
+        //     .then((result) => {
+        //         console.log("File uploaded successfull", result)
+        //         convertFile(remoteFileName, strFormat, outputRemotePath, convertApi)
+        //             .then(result => {
+        //                 console.log("File converted sucessfully", result)
+        //                 downloadFile(downloadPath, fileApi)
+        //                     .then(result => {
+        //                         fs.writeFileSync(downloadPath, result)
+        //                         console.log('Congratulations, file downloaded sucessfully')
+        //                     })
+        //                     .catch(err => { console.log("File Download Error", err); })
+        //             })
+        //             .catch(err => { console.log("Error in Converting file", err); })
+        //     })
+        //     .catch(err => { console.log('ERROR raise in file upload', err) })
 
-        const requestUpload = new GroupDocs.UploadFileRequest(remoteFileName, uploadFileName);
-        const responseUpload = await fileApi.uploadFile(requestUpload)
-            .then((result) => { console.log("File uploaded successfull", result) })
-            .catch(err => { console.log('ERROR raise in file upload', err) })
+        const timer = setTimeout(() => { console.log('timer init') }, 999999)
+        let no_of_convrt = 1;
+        while (true) {
+            await uploadFile(remoteFileName, uploadFileName, fileApi)
+                .then(res => { console.log("File uploaded sucessfully", res) })
+                .catch(err => { clearTimeout(timer); if (err) throw err })
 
-        // converting pdf to word document
-        const setting = new GroupDocs.ConvertSettings();
-        setting.filePath = remoteFileName;
-        setting.format = strFormat;
-        setting.outputPath = outputRemotePath;
+            await convertFile(remoteFileName, strFormat, outputRemotePath, convertApi)
+                .then(res => { console.log("File converted sucessfully", res) })
+                .catch(err => { clearTimeout(timer); if (err) throw err })
 
-        const loadOptions = new GroupDocs.PdfLoadOptions();
-        loadOptions.hidePdfAnnotations = true;
-        loadOptions.removeEmbeddedFiles = false;
-        loadOptions.flattenAllFields = true;
+            await downloadFile(downloadPath, fileApi)
+                .then(result => {
+                    fs.writeFileSync(downloadPath, result)
+                    console.log('Congratulations, file downloaded sucessfully')
+                    clearTimeout(timer);
+                })
+                .catch(err => { console.log("File Download Error", err); clearTimeout(timer); })
 
-        setting.loadOptions = loadOptions;
-
-        const convertOptions = new GroupDocs.DocxConvertOptions()
-        convertOptions.fromPage = 1
-        convertOptions.pagesCount = 1
-        
-        setting.convertOptions = convertOptions
-
-        const convertRequest = new GroupDocs.ConvertDocumentRequest(setting)
-        const convertResponse = await convertApi.convertDocument(convertRequest)
-        .then((result)=>{console.log('File converted sucessfully', result)})
-        .catch(err => {console.log("File convertion Error", err)})
+            console.log("no_of_convert ==>> ", no_of_convrt, '\n\n\n');
+            no_of_convrt += 1;
+        }
 
     } catch (error) {
         console.log("ERROR raise ==>> ", error)
