@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>File upload</title>
+    <style>
+        body {
+            background: #f1f1f1;
+            margin: 0;
+        }
+
+        .filelist {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .container {
+            margin: 0 auto;
+            max-width: 600px;
+            padding: 30px 20px;
+            background: #fff;
+        }
+
+        .submit-btn {
+            margin-top: 30px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: 700;
+            color: white;
+            background-color: black;
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <img src="/myimage" alt="me">
+    <div class="container">
+        <h1>File Upload in Node.js</h1>
+        <form id='form' method="post" action="multi-upload" enctype="multipart/form-data">
+            <input name="files" id="filesToUpload" type="file" multiple />
+            <ul class="filelist" id="fileList"></ul>
+            <button class="submit-btn">Submit</button>
+        </form>
+    </div>
+
+    <script>
+        const input = document.getElementById("filesToUpload");
+        const list = document.getElementById("fileList");
+        const form  = document.getElementById('form');
+        input.onchange = () => {
+            while (list.hasChildNodes()) {
+                list.removeChild(ul.firstChild);
+            }
+
+            if (input.files.length > 1) {
+                for (let file of input.files) {
+                    const li = document.createElement("li");
+                    li.innerHTML = file.name;
+                    list.append(li);
+                }
+            }
+        }
+        form.onsubmit = (e) => {
+            e.preventDefault();
+            // e.stopPropagation();
+            // console.log('submit');
+            const formdata = new FormData();
+            for (let x = 0; x < input.files.length; x++) {
+                let file = input.files.item(x);
+                formdata.append(`files`, file);
+            }
+
+            fetch("/multi-upload", {
+                method: 'post',
+                body: formdata
+            }).then(res=> res.json().then(data=>console.log(data) ))
+            .catch(err=> console.log(err));
+        }
+    </script>
+
+
+</body>
+
+</html>

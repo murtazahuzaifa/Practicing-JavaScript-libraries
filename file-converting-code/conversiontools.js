@@ -1,10 +1,10 @@
 const ConversionClient = require('conversiontools');
-
+require('dotenv').config();
 // API Token from your Profile page at https://conversiontools.io/profile
 // https://conversiontools.io/api-documentation
 // https://github.com/conversiontools/conversiontools-node
 // https://conversiontools.io/conversion
-const apiToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImM5MGIyNDVhZDRmNTQyMTZiNmNlNWY5ZjA1ZTNhNDUwIiwiaWF0IjoxNjAyNDA4MzQ0fQ.-qEMrgwPv3hjhigHgaGL8mNb3CibxEqrjkFVeo6naz8';
+const apiToken = process.env.conversionToolApiToken;
 
 const conversion = new ConversionClient(apiToken);
 

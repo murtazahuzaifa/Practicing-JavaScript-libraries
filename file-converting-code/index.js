@@ -37,46 +37,8 @@ main();*/
 var GroupDocs = require('groupdocs-conversion-cloud');
 const fs = require('fs');
 // get your appSid and appKey at https://dashboard.groupdocs.cloud (free registration is required).
-// var appSid = process.env.appSid
-// var appKey = process.env.appKey
-/*
-// construct Api
-var api = GroupDocs.InfoApi.fromKeys(appSid, appKey);
-var request = new GroupDocs.GetSupportedConversionTypesRequest();
-// retrieve supported conversion types
-api.getSupportedConversionTypes(request)
-    .then(function (response) {
-        console.log("Supported file-formats:")
-        response.forEach(function (format) {
-            console.log(format.sourceFormat + ": [" + format.targetFormats.join(", ") + "]");
-        });
-    })
-    .catch(function (error) {
-        console.log("Error: " + error.message)
-    });
-*/
-/*
-// file download example
-const main = async () => {
-    const convertApi = GroupDocs.ConvertApi.fromKeys(appSid, appKey);
-    const fileApi = GroupDocs.FileApi.fromKeys(appSid, appKey);
 
-    try {
-        const fileName = 'sample.docx';
-
-        const requestDownload = new GroupDocs.DownloadFileRequest(fileName);
-        const responseDownload = await fileApi.downloadFile(requestDownload);
-
-        // responseDownload = responseDownload
-        console.log('Download Response ==>> ', responseDownload)
-        fs.writeFileSync('C:/Temp/02_pages_copy.docx', responseDownload)
-        console.log('Congratulations, file downloaded properly')
-
-    } catch (error) {
-        console.log("ERROR raise ==>> ", error)
-    }
-}
-*/
+// console.log(fs.readFileSync('Cn.pdf'))
 
 const uploadFile = async (remotePath, localPath, fileApi) => {
     /* remotePath: is use to put the file in the cloud
@@ -127,18 +89,18 @@ const main = async () => {
     const appKey = process.env.appKey
     const convertApi = GroupDocs.ConvertApi.fromKeys(appSid, appKey);
     const fileApi = GroupDocs.FileApi.fromKeys(appSid, appKey);
-    const fileName = 'Cn';
-    const strFormat = 'ppt';
-    const uploadFileName = `${fileName}.pdf`;
-    const remoteFileName = `${fileName}.pdf`;
-    const outputRemotePath = `${fileName}.${strFormat}`;
-    const downloadPath = `${fileName}.${strFormat}`
+    const fileName = 'xlfile';
+    const outputFileFormat = 'pdf';
+    const uploadFileName = `${fileName}.xlsx`;
+    const remoteFileName = `${fileName}.xlsx`;
+    const outputRemotePath = `${fileName}.${outputFileFormat}`;
+    const downloadPath = `${fileName}.${outputFileFormat}`
 
     try {
         // await uploadFile(remoteFileName, uploadFileName, fileApi)
         //     .then((result) => {
         //         console.log("File uploaded successfull", result)
-        //         convertFile(remoteFileName, strFormat, outputRemotePath, convertApi)
+        //         convertFile(remoteFileName, outputFileFormat, outputRemotePath, convertApi)
         //             .then(result => {
         //                 console.log("File converted sucessfully", result)
         //                 downloadFile(downloadPath, fileApi)
@@ -159,7 +121,7 @@ const main = async () => {
                 .then(res => { console.log("File uploaded sucessfully", res) })
                 .catch(err => { clearTimeout(timer); if (err) throw err })
 
-            await convertFile(remoteFileName, strFormat, outputRemotePath, convertApi)
+            await convertFile(remoteFileName, outputFileFormat, outputRemotePath, convertApi)
                 .then(res => { console.log("File converted sucessfully", res) })
                 .catch(err => { clearTimeout(timer); if (err) throw err })
 

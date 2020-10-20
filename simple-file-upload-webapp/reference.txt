@@ -1,0 +1,3 @@
+https://writejavascript.com/blog/fast-and-simple-file-upload-in-node-js/
+http://html5doctor.com/drag-and-drop-to-server/
+https://stackabuse.com/handling-file-uploads-in-node-js-with-expres-and-multer/
