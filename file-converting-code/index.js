@@ -89,10 +89,10 @@ const main = async () => {
     const appKey = process.env.appKey
     const convertApi = GroupDocs.ConvertApi.fromKeys(appSid, appKey);
     const fileApi = GroupDocs.FileApi.fromKeys(appSid, appKey);
-    const fileName = 'xlfile';
-    const outputFileFormat = 'pdf';
-    const uploadFileName = `${fileName}.xlsx`;
-    const remoteFileName = `${fileName}.xlsx`;
+    const fileName = 'Cn';
+    const outputFileFormat = 'docx';
+    const uploadFileName = `${fileName}.pdf`;
+    const remoteFileName = `${fileName}.pdf`;
     const outputRemotePath = `${fileName}.${outputFileFormat}`;
     const downloadPath = `${fileName}.${outputFileFormat}`
 

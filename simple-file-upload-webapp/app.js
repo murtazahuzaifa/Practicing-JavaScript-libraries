@@ -13,6 +13,14 @@ const appKey = process.env.appKey
 const convertApi = GroupDocs.ConvertApi.fromKeys(appSid, appKey);
 const fileApi = GroupDocs.FileApi.fromKeys(appSid, appKey);
 
+const fileMimeTypes = {
+    'docx': "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "jpeg": "image/jpeg",
+    "xlsx": "application/vnd.openxmlformats-officedocument.spreetml.sheet",
+    "pdf": "application/pdf",
+
+}
+
 // app.use(express.json());
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -31,12 +39,40 @@ app.post('/multi-upload', upload.array('files', 5), async (req, res) => {
     // console.log(Object.keys(req));
     // console.log(req.headers);
     if (req.files) {
-        // console.log(req.files[0].path);
-        const buff = fs.readFileSync(req.files[0].path)
+        // console.log(req.files);
+        // const buff = fs.readFileSync(req.files[0].path)
+
+        // console.log('FIle size ', data.length, '-bytes')
+        const fileName = req.files[0].filename.split('.')[0]; // upload file name
+        const fileExt = req.files[0].filename.split('.')[1]; // upload file extension
+        const outputFileFormat = 'docx'; //output file extension
+        const uploadFileName = req.files[0].path; // file local path to upload
+        const remoteFileName = `${fileName}.${fileExt}`;
+        const outputRemotePath = `${fileName}.${outputFileFormat}`;
+        const outputMimeType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        
+        await uploadFile(remoteFileName, uploadFileName, fileApi)
+            .then(res => { console.log("File uploaded sucessfully", res) })
+            .catch(err => { console.log(err) })
+
+        await convertFile(remoteFileName, outputFileFormat, outputRemotePath, convertApi)
+            .then(res => { console.log("File converted sucessfully", res) })
+            .catch(err => { console.log(err) })
+
+        // await downloadFile(outputRemotePath, fileApi)
+        //     .then(result => {
+        //         // fs.writeFileSync(downloadPath, result)
+        //         res.writeHead(200, { "Content-type": outputMimeType })
+        //         res.end(result)
+        //         console.log('Congratulations, file downloaded sucessfully')
+        //     })
+        //     .catch(err => { console.log("File Download Error", err) })
 
 
-
-        return res.status(200).json({ sucess: 'file recieved sucessfully', fileBuffer: buff });
+        return res.status(200).json({
+            sucess: 'file recieved sucessfully',
+            downloadLink: `/getconverterfile/${outputRemotePath}`
+        });
     }
     return res.status(200).json({ sucess: 'file recieved sucessfully' });
 });
@@ -48,8 +84,21 @@ app.get('/content/img', (req, res) => {
     res.end(file)
     // res.end(fs.readFileSync(`./src/uploads/${req.params.fileName}`));
     // res.end(`${req.params.fileName}`);
-})
+});
 
+app.get('/getconverterfile/:filename', async (req, res) => {
+
+    const fileExt = req.params.filename.split('.')[1].toLowerCase()
+
+    await downloadFile(req.params.filename, fileApi)
+        .then(result => {
+            res.writeHead(200, { "Content-type": fileMimeTypes[fileExt] })
+            res.end(result)
+            console.log('Congratulations, file downloaded sucessfully')
+        })
+        .catch(err => { console.log("File Download Error", err) })
+
+})
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
 
