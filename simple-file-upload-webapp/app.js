@@ -4,6 +4,7 @@ const multer = require('multer');
 var GroupDocs = require('groupdocs-conversion-cloud');
 const fs = require('fs');
 require('dotenv').config();
+const cors = require('cors'); // cross origin resource sharing
 
 const app = express();
 const port = 3000;
@@ -20,8 +21,10 @@ const fileMimeTypes = {
     "pdf": "application/pdf",
 
 }
+// there are two way to store files in multer one is permenently and other is temporary
 
-// app.use(express.json());
+// first way of storing file,  which is permenently 
+app.use(express.json());
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, './src/uploads');
@@ -31,15 +34,21 @@ const storage = multer.diskStorage({
     }
 });
 
+// second way of saving file in buffer, which is temporary
+// const storage = multer.memoryStorage();
+
 const upload = multer({ storage });
+app.use(cors());
 
-app.get('/', (req, res) => res.sendFile(path.join(__dirname + '/index.html')));
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname + '/index.html'));
+});
 
-app.post('/multi-upload', upload.array('files', 5), async (req, res) => {
+app.post('/multi-upload', upload.array('files', 5), (req, res, next) => { console.log("Request Headers", req.headers); next() }, async (req, res) => {
     // console.log(Object.keys(req));
-    // console.log(req.headers);
+    // console.log(req.headers.origin);
     if (req.files) {
-        // console.log(req.files);
+        console.log(req.files);
         // const buff = fs.readFileSync(req.files[0].path)
 
         // console.log('FIle size ', data.length, '-bytes')
@@ -50,7 +59,7 @@ app.post('/multi-upload', upload.array('files', 5), async (req, res) => {
         const remoteFileName = `${fileName}.${fileExt}`;
         const outputRemotePath = `${fileName}.${outputFileFormat}`;
         const outputMimeType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-        
+
         await uploadFile(remoteFileName, uploadFileName, fileApi)
             .then(res => { console.log("File uploaded sucessfully", res) })
             .catch(err => { console.log(err) })
@@ -59,22 +68,12 @@ app.post('/multi-upload', upload.array('files', 5), async (req, res) => {
             .then(res => { console.log("File converted sucessfully", res) })
             .catch(err => { console.log(err) })
 
-        // await downloadFile(outputRemotePath, fileApi)
-        //     .then(result => {
-        //         // fs.writeFileSync(downloadPath, result)
-        //         res.writeHead(200, { "Content-type": outputMimeType })
-        //         res.end(result)
-        //         console.log('Congratulations, file downloaded sucessfully')
-        //     })
-        //     .catch(err => { console.log("File Download Error", err) })
-
-
         return res.status(200).json({
             sucess: 'file recieved sucessfully',
             downloadLink: `/getconverterfile/${outputRemotePath}`
         });
     }
-    return res.status(200).json({ sucess: 'file recieved sucessfully' });
+    return res.status(200).json({ sucess: 'file received sucessfully' });
 });
 
 app.get('/content/img', (req, res) => {
@@ -84,6 +83,17 @@ app.get('/content/img', (req, res) => {
     res.end(file)
     // res.end(fs.readFileSync(`./src/uploads/${req.params.fileName}`));
     // res.end(`${req.params.fileName}`);
+});
+// app.use('/fileupload', (req,res, next)=>{console.log(req.headers); next() })
+app.post('/fileupload', upload.array('files', 5), async (req, res) => {
+    if (req.files) {
+    //     res.header(200, { headerRes: 'header receive' })
+        return res.status(200).json({ response: 'file receive' });
+    }
+    // console.log(req)
+    // res.writeHead(200, { "headerRes": 'header receive' })
+    return res.status(200).json({ response: 'request receive' });
+    // return res.end({ response: 'request receive' });
 });
 
 app.get('/getconverterfile/:filename', async (req, res) => {
@@ -138,3 +148,12 @@ const downloadFile = async (fileName, fileApi) => {
     const requestDownload = new GroupDocs.DownloadFileRequest(fileName);
     return fileApi.downloadFile(requestDownload)
 }
+
+
+// const express = require('express');
+
+// const app = express();
+
+// app.get('/', (req,res)=>{ res.send('request received')})
+
+// app.listen(3000, ()=>{console.log('server started')})

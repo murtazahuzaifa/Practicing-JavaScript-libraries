@@ -77,13 +77,14 @@
             }
 
             fetch("/multi-upload", {
+                headers: { originhost: 'http://localhost:8888' },
                 method: 'post',
                 body: formdata
             }).then(res => res.json().then(data => {
                 console.log(data);
                 const atag = document.createElement('a');
                 atag.innerHTML = 'download'
-                atag.target = '_blank'
+                // atag.target = '_blank'
                 atag.href = data.downloadLink
                 container.appendChild(atag)
             }))
