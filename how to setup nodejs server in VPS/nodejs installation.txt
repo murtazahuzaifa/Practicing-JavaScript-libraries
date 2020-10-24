@@ -1,0 +1,35 @@
+reference : https://www.youtube.com/watch?v=D7GaDfXkFbU&list=PLu0W_9lII9agiCUZYRsvtGTXdxkzPyItg&index=97
+
+apt install nodejs
+apt install npm
+apt install build-essential -- optional
+mkdir home/nodeapp
+cd home/nodeapp
+touch index.js
+nano index.js
+
+#### paste the the code below and try running the local server ####
+
+const hostname = 'localhost';
+const port = 3000;
+const server = http.createServer((req,res)=>{
+   res.statusCode = 200;
+   res.setHeader('Content-Type', 'text/plain');
+   res.end('Hello world');
+});
+server.listen(port, hostname, ()=>{
+   console.log(`Server running at http://${hostname}:${port}`);
+});
+
+#######################################################################
+node index.js
+### now your server should run with the following output
+>> Server running at http://localhost:3000
+
+ufw allow 3000 // this line will allow your outside traffic to find your server
+
+sudo npm install pm2@latest -g
+
+pm2 start app.js
+
+ln -s /etc/nginx/sites-available/syntaxfit.com /etc/nginx/sites-enabled/syntaxfit.com

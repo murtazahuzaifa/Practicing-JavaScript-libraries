@@ -1,0 +1,8 @@
+
+## how to setup nodejs app on nginx and ssl certified 
+https://www.youtube.com/watch?v=oykl1Ih9pMg
+https://gist.github.com/bradtraversy/cd90d1ed3c462fe3bddd11bf8953a896
+
+
+## how to setup multiple nodejs apps on nginx
+https://www.digitalocean.com/community/questions/setting-up-multiple-nodejs-applications-using-nginx-vitual-hosts

@@ -1,0 +1,5 @@
+ufw enable
+ufw startup
+ufw allow <service>
+ufw status
+systemctl status nginx

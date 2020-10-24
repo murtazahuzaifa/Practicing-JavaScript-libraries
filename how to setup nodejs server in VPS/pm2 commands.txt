@@ -1,0 +1,19 @@
+PM2 node process manager
+
+npm install pm2 -g
+
+##two ways to start nodejs app in background process
+pm2 start <your App Js file name>
+pm2 start --name <process name> <your App Js file name>
+
+## to print the available examples commands
+pm2 examples
+
+## to stop the node app
+pm2 stop <process name>
+
+
+# To make sure app starts when reboot
+pm2 startup systemd
+# then
+pm2 save
