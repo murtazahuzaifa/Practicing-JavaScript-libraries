@@ -9,7 +9,7 @@ touch index.js
 nano index.js
 
 #### paste the the code below and try running the local server ####
-
+const http = require('http');
 const hostname = 'localhost';
 const port = 3000;
 const server = http.createServer((req,res)=>{

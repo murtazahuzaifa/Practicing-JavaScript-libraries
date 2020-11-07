@@ -89,6 +89,7 @@ const main = async () => {
     const appKey = process.env.appKey
     const convertApi = GroupDocs.ConvertApi.fromKeys(appSid, appKey);
     const fileApi = GroupDocs.FileApi.fromKeys(appSid, appKey);
+    const infoApi = GroupDocs.InfoApi.fromKeys(appSid, appKey);
     const fileName = 'Cn';
     const outputFileFormat = 'docx';
     const uploadFileName = `${fileName}.pdf`;
@@ -114,28 +115,35 @@ const main = async () => {
         //     })
         //     .catch(err => { console.log('ERROR raise in file upload', err) })
 
-        const timer = setTimeout(() => { console.log('timer init') }, 999999)
-        let no_of_convrt = 1;
-        while (true) {
-            await uploadFile(remoteFileName, uploadFileName, fileApi)
-                .then(res => { console.log("File uploaded sucessfully", res) })
-                .catch(err => { clearTimeout(timer); if (err) throw err })
+        // const timer = setTimeout(() => { console.log('timer init') }, 999999)
+        // let no_of_convrt = 1;
+        // while (true) {
+        //     await uploadFile(remoteFileName, uploadFileName, fileApi)
+        //         .then(res => { console.log("File uploaded sucessfully", res) })
+        //         .catch(err => { clearTimeout(timer); if (err) throw err })
 
-            await convertFile(remoteFileName, outputFileFormat, outputRemotePath, convertApi)
-                .then(res => { console.log("File converted sucessfully", res) })
-                .catch(err => { clearTimeout(timer); if (err) throw err })
+        //     await convertFile(remoteFileName, outputFileFormat, outputRemotePath, convertApi)
+        //         .then(res => { console.log("File converted sucessfully", res) })
+        //         .catch(err => { clearTimeout(timer); if (err) throw err })
 
-            await downloadFile(downloadPath, fileApi)
-                .then(result => {
-                    fs.writeFileSync(downloadPath, result)
-                    console.log('Congratulations, file downloaded sucessfully')
-                    clearTimeout(timer);
-                })
-                .catch(err => { console.log("File Download Error", err); clearTimeout(timer); })
+        //     await downloadFile(downloadPath, fileApi)
+        //         .then(result => {
+        //             fs.writeFileSync(downloadPath, result)
+        //             console.log('Congratulations, file downloaded sucessfully')
+        //             clearTimeout(timer);
+        //         })
+        //         .catch(err => { console.log("File Download Error", err); clearTimeout(timer); })
 
-            console.log("no_of_convert ==>> ", no_of_convrt, '\n\n\n');
-            no_of_convrt += 1;
-        }
+        //     console.log("no_of_convert ==>> ", no_of_convrt, '\n\n\n');
+        //     no_of_convrt += 1;
+        // }
+
+        const getDocumentMetaData = new GroupDocs.GetDocumentMetadataRequest();
+        getDocumentMetaData.filePath = 'Cn.docx'
+        await infoApi.getDocumentMetadata(getDocumentMetaData)
+            .then(data => console.log({...data}))
+            .catch(err => { console.log("ERROR ===>>",err) })
+
 
     } catch (error) {
         console.log("ERROR raise ==>> ", error)

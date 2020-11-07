@@ -21,21 +21,22 @@ const fileMimeTypes = {
     "pdf": "application/pdf",
 
 }
+// app.use(express.json());
 // there are two way to store files in multer one is permenently and other is temporary
 
 // first way of storing file,  which is permenently 
-app.use(express.json());
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, './src/uploads');
-    },
-    filename: (req, file, cb) => {
-        cb(null, `${Date.now()}-${file.originalname}`);
-    }
-});
+
+// const storage = multer.diskStorage({
+//     destination: (req, file, cb) => {
+//         cb(null, './src/uploads');
+//     },
+//     filename: (req, file, cb) => {
+//         cb(null, `${Date.now()}-${file.originalname}`);
+//     }
+// });
 
 // second way of saving file in buffer, which is temporary
-// const storage = multer.memoryStorage();
+const storage = multer.memoryStorage();
 
 const upload = multer({ storage });
 app.use(cors());
@@ -45,22 +46,29 @@ app.get('/', (req, res) => {
 });
 
 app.post('/multi-upload', upload.array('files', 5), (req, res, next) => { console.log("Request Headers", req.headers); next() }, async (req, res) => {
+    console.log('incomming file');
     // console.log(Object.keys(req));
     // console.log(req.headers.origin);
     if (req.files) {
-        console.log(req.files);
+        // console.log(req.files);
+        console.log(req.headers)
         // const buff = fs.readFileSync(req.files[0].path)
 
         // console.log('FIle size ', data.length, '-bytes')
-        const fileName = req.files[0].filename.split('.')[0]; // upload file name
-        const fileExt = req.files[0].filename.split('.')[1]; // upload file extension
+        const fileName = req.files[0].originalname.split('.')[0]; // upload file name
+        const fileExt = req.files[0].originalname.split('.')[1]; // upload file extension
         const outputFileFormat = 'docx'; //output file extension
-        const uploadFileName = req.files[0].path; // file local path to upload
+        // const uploadFileName = req.files[0].path; // file local path to upload
+        const uploadFileBuffer = req.files[0].buffer
         const remoteFileName = `${fileName}.${fileExt}`;
         const outputRemotePath = `${fileName}.${outputFileFormat}`;
         const outputMimeType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
 
-        await uploadFile(remoteFileName, uploadFileName, fileApi)
+        // await uploadFile(remoteFileName, uploadFileName, fileApi)
+        //     .then(res => { console.log("File uploaded sucessfully", res) })
+        //     .catch(err => { console.log(err) })
+        const requestUpload = new GroupDocs.UploadFileRequest(remoteFileName, uploadFileBuffer);
+        await fileApi.uploadFile(requestUpload)
             .then(res => { console.log("File uploaded sucessfully", res) })
             .catch(err => { console.log(err) })
 
@@ -70,7 +78,7 @@ app.post('/multi-upload', upload.array('files', 5), (req, res, next) => { consol
 
         return res.status(200).json({
             sucess: 'file recieved sucessfully',
-            downloadLink: `/getconverterfile/${outputRemotePath}`
+            downloadLink: `http://${req.headers.host || ''}/getconverterfile/${outputRemotePath}`
         });
     }
     return res.status(200).json({ sucess: 'file received sucessfully' });
@@ -85,9 +93,10 @@ app.get('/content/img', (req, res) => {
     // res.end(`${req.params.fileName}`);
 });
 // app.use('/fileupload', (req,res, next)=>{console.log(req.headers); next() })
-app.post('/fileupload', upload.array('files', 5), async (req, res) => {
-    if (req.files) {
-    //     res.header(200, { headerRes: 'header receive' })
+app.post('/fileupload', upload.single('files'), async (req, res) => {
+    if (req.file) {
+        //     res.header(200, { headerRes: 'header receive' })
+        console.log(req.file);
         return res.status(200).json({ response: 'file receive' });
     }
     // console.log(req)
