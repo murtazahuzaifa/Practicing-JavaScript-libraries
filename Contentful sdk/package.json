@@ -1,0 +1,9 @@
+{
+  "name": "Contentful sdk",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "contentful": "^7.14.8"
+  }
+}
