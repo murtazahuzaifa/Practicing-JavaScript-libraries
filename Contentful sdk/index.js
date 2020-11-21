@@ -1,9 +1,11 @@
-// main.js
+require('dotenv').config();
+
+
 var contentful = require('contentful')
 
 var client = contentful.createClient({
-    space: '08kflue73mqh',
-    accessToken: 'SQ5_Y6paKYx7puGR0i0-ncD2iJk30OP3Bk02GJN_1bc'
+    space: process.env.SPACE_ID,
+    accessToken: process.env.ACCESS_TOKEN
   })
 
 client.getEntries()
