@@ -1,2 +1,4 @@
 yarn-error.log
 .env
+dist
+build
