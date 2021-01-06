@@ -8,9 +8,8 @@ const awsConfig = {
     'secretAccessKey': process.env.SECRET_ACCESS_KEY,
 };
 AWS.config.update({ ...awsConfig });
-AWS.config.region = REGION;
 
-const cognitoServiceProvider = new AWS.CognitoIdentityServiceProvider({ apiVersion: '2016-04-18', region: REGION });
+const cognitoServiceProvider = new AWS.CognitoIdentityServiceProvider();
 
 //////////////////////////////////////////////////////////////////////
 // ref  https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CognitoIdentityServiceProvider.html#listUsers-property
@@ -21,7 +20,7 @@ var params = {
     //   'STRING_VALUE',
     //   /* more items */
     // ],
-    // Filter: 'STRING_VALUE',
+    Filter: `username = "murtazahuzaifa"`,
     // Limit: 'NUMBER_VALUE',
     // PaginationToken: 'STRING_VALUE'
 };
