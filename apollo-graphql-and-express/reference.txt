@@ -1,0 +1,6 @@
+https://www.freecodecamp.org/news/add-a-graphql-server-to-a-restful-express-js-api-in-2-minutes/
+
+
+https://www.apollographql.com/docs/apollo-server/data/subscriptions/#using-with-middleware-integrations
+
+https://www.apollographql.com/docs/react/data/subscriptions/#authentication-over-websocket

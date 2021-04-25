@@ -12,19 +12,18 @@ AWS.config.update({ ...awsConfig });
 const cognitoServiceProvider = new AWS.CognitoIdentityServiceProvider();
 
 //////////////////////////////////////////////////////////////////////
-// ref  https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CognitoIdentityServiceProvider.html#listUsers-property
+// ref  https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CognitoIdentityServiceProvider.html#adminCreateUser-property
 
-var params = {
+cognitoServiceProvider.adminCreateUser({
     UserPoolId: process.env.USER_POOL_ID, /* required */
-    // AttributesToGet: [
-    //   'STRING_VALUE',
-    //   /* more items */
-    // ],
-    Filter: `username = "murtazahuzaifa"`,
-    // Limit: 'NUMBER_VALUE',
-    // PaginationToken: 'STRING_VALUE'
-};
-cognitoServiceProvider.listUsers(params, function (err, data) {
+    Username: "9743456673",
+    UserAttributes: [
+        { Name: "email", Value: "murtaza.huzaifa2@gmail.com" },
+    ],
+    TemporaryPassword: "Murtaza@123",
+    
+}, function (err, data) {
     if (err) console.log("ERROR==>", err, "\nERROR.STACK==>", err.stack); // an error occurred
     else console.log(JSON.stringify(data, null, 2));// successful response
 });
+
