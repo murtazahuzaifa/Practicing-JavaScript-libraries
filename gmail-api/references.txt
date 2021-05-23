@@ -1,0 +1,6 @@
+https://www.fullstacklabs.co/blog/access-mailbox-using-gmail-node
+
+
+https://www.youtube.com/watch?v=jhxzhpFanfU
+
+https://developers.google.com/gmail/api/reference/rest/v1/users.messages/get
