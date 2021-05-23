@@ -23,8 +23,8 @@ const TOKEN_PATH = 'token.json';
 
 
 // authorize(credentials, listLabels);
-// authorize(credentials, listMessages("label:inbox"));
-authorize(credentials, getMessages("17999a726fa70bf0"));
+// authorize(credentials, listMessages("label:inbox subject:[panacloud/panacloud-portal] Custom Button Componenet (#275)"));
+authorize(credentials, getMessages("1797a38e7d66f201"));
 
 /**
  * Create an OAuth2 client with the given credentials, and then execute the

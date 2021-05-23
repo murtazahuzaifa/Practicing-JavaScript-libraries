@@ -36,7 +36,7 @@ exports.getMessages = (messageId,) => (auth) => {
             {
                 userId: 'me',
                 id: messageId,
-                format: ["minimal"]
+                format: []
             }, (err, res) => {
                 if (err) {
                     reject(err);
@@ -46,7 +46,7 @@ exports.getMessages = (messageId,) => (auth) => {
                     resolve([]);
                     return;
                 }
-                console.log(res)
+                console.log(JSON.stringify(res.data, null, 2))
                 resolve(res.data.messages);
             }
         );
